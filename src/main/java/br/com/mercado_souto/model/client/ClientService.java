@@ -5,7 +5,7 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import jakarta.persistence.EntityNotFoundException;
+import br.com.mercado_souto.util.exception.EntityNotFoundException;
 import jakarta.transaction.Transactional;
 
 @Service
@@ -29,7 +29,7 @@ public class ClientService {
     
     public Client findById(Long id){
         Client client = clientRepository.findById(id)
-            .orElseThrow(()-> new EntityNotFoundException("Client not found with id: "+id));
+            .orElseThrow(()-> new EntityNotFoundException("Client",id));
         
         return client;
     }

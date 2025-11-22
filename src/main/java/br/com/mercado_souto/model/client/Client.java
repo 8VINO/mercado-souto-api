@@ -9,6 +9,7 @@ import br.com.mercado_souto.model.seller.Seller;
 import br.com.mercado_souto.util.entity.AuditableEntity;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -44,7 +45,7 @@ public class Client extends AuditableEntity  {
     @Column
     private List<Address> addresses;
     
-    @Column
+    @OneToOne(mappedBy="client")
     private Seller seller;
     
     

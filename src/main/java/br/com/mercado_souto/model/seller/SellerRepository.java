@@ -1,5 +1,7 @@
 package br.com.mercado_souto.model.seller;
 
-public class SellerRepository {
+import org.springframework.data.jpa.repository.JpaRepository;
+
+public interface SellerRepository extends JpaRepository<Seller, Long> {
     
 }
