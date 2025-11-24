@@ -19,9 +19,17 @@ import br.com.mercado_souto.model.category.CategoryService;
 import br.com.mercado_souto.model.product.Product;
 import br.com.mercado_souto.model.product.ProductService;
 import br.com.mercado_souto.model.seller.SellerService;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 @RestController
 @RequestMapping("/api/product")
 @CrossOrigin
+
+@Tag(
+    name = "Product API ",
+    description = "API responsible for managing products in the system"
+)
+
 public class ProductController {
 
     @Autowired
@@ -32,6 +40,11 @@ public class ProductController {
 
     @Autowired
     private SellerService sellerService;
+    
+   @Operation(
+       summary = "Endpoint responsible for creating a product",
+       description = "Receives the seller id of the seller who wants to register the product, along with the product data in the request body."
+   )
 
     @PostMapping("/{idSeller}")
     public ResponseEntity<Product> create(@PathVariable Long idSeller,@RequestBody ProductRequest request) {
@@ -44,11 +57,21 @@ public class ProductController {
         return ResponseEntity.status(HttpStatus.CREATED).body(product);
     }
 
+    @Operation(
+       summary = "Endpoint responsible for getting all products",
+       description = "Returns a list of products from ALL sellers."
+   )
     @GetMapping
     public ResponseEntity<List<Product>> findAll() {
         List<Product> list = productService.findAll();
         return ResponseEntity.status( HttpStatus.OK).body(list);
     }
+
+     @Operation(
+       summary = "Endpoint responsible for getting all products from a SINGLE seller",
+       description = "Receives the seller id and returns a list of products."
+   )
+   
 
     @GetMapping("/by-seller/{idSeller}")
     public ResponseEntity<List<Product>> findBySeller(@PathVariable Long idSeller){
@@ -58,13 +81,20 @@ public class ProductController {
 
         return ResponseEntity.status( HttpStatus.OK).body(list);
     }
-
+     @Operation(
+       summary = "Endpoint responsible for getting a specific product",
+       description = "Receives the product id and returns the specific product."
+   )
     @GetMapping("/{id}")
     public ResponseEntity<Product> findById(@PathVariable Long id) {
         Product product = productService.findById(id);
         return ResponseEntity.status( HttpStatus.OK).body(product);
     }
 
+      @Operation(
+       summary = "Endpoint responsible for updating the product",
+       description = "Receives the product id and returns the updated product."
+   )
     @PutMapping("/{id}")
     public ResponseEntity<Product> update(@PathVariable Long id, @RequestBody ProductRequest request) {
 
@@ -74,7 +104,11 @@ public class ProductController {
 
         return ResponseEntity.status( HttpStatus.OK).body(product);
     }
-
+    
+       @Operation(
+       summary = "Endpoint responsible for deleting the product",
+       description = "Receives the product id, deletes the product and returns status 204."
+   )
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> delete(@PathVariable Long id) {
         productService.delete(id);

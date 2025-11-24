@@ -17,14 +17,25 @@ import org.springframework.web.bind.annotation.RestController;
 
 import br.com.mercado_souto.model.client.Client;
 import br.com.mercado_souto.model.client.ClientService;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 
 @RestController
 @RequestMapping("/api/client")
 @CrossOrigin
+@Tag(
+    name = "Client API ",
+    description = "API responsible for managing clients in the system"
+)
 public class ClientController {
     @Autowired
     ClientService clientService;
     
+     @Operation(
+       summary = "Endpoint responsible for registering a client",
+       description = "Receives the client data in the request body, creates and return the client."
+   )
+
     @PostMapping
     ResponseEntity<Client> create(@RequestBody ClientRequest request ){
 
@@ -33,7 +44,10 @@ public class ClientController {
         return ResponseEntity.status(HttpStatus.CREATED).body(client);
 
     }
-
+     @Operation(
+       summary = "Endpoint responsible for getting all clients",
+       description = "Returns a list of clients."
+   )
     @GetMapping
     ResponseEntity<List<Client>> findAll(){
 
@@ -41,7 +55,10 @@ public class ClientController {
 
         return ResponseEntity.status(HttpStatus.OK).body(clients);
     }
-
+      @Operation(
+       summary = "Endpoint responsible for getting a specific client",
+       description = "Receives the client id and returns the specific client."
+   )
     @GetMapping("/{id}")
     ResponseEntity<Client> findById(@PathVariable Long id){
 
@@ -50,6 +67,10 @@ public class ClientController {
         return ResponseEntity.status(HttpStatus.OK).body(client);
     }
 
+       @Operation(
+       summary = "Endpoint responsible for updating the client",
+       description = "Receives the client id and returns the updated client."
+   )
     @PutMapping("/{id}")
     ResponseEntity<Client> update(@PathVariable Long id, @RequestBody ClientRequest request){
 
@@ -58,6 +79,10 @@ public class ClientController {
         return ResponseEntity.status(HttpStatus.OK).body(client);
     }
 
+      @Operation(
+       summary = "Endpoint responsible for deleting the client",
+       description = "Receives the client id, deletes the client and returns status 204."
+   )
     @DeleteMapping("/{id}")
     ResponseEntity<Void> delete(@PathVariable Long id){
 
