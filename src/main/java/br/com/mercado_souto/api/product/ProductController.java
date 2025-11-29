@@ -13,7 +13,9 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.multipart.MultipartFile;
 
 import br.com.mercado_souto.model.category.CategoryService;
 import br.com.mercado_souto.model.product.Product;
@@ -114,4 +116,17 @@ public class ProductController {
         productService.delete(id);
         return ResponseEntity.status( HttpStatus.NO_CONTENT).build();
     }
+
+   @Operation(
+    summary = "Add an image to a product",
+    description = "Receives the product id in the URL path and an image in the request body (multipart/form-data) under the field name 'image'. "
+    + "The endpoint saves the image for the specified product and returns the updated product with HTTP status 201."
+)
+    @PostMapping("/image/{id}")
+    public ResponseEntity<Product> saveImage(@PathVariable Long id, @RequestParam(value = "image", required = true) MultipartFile image) {
+
+        Product product = productService.saveImage(id, image);
+        return ResponseEntity.status(HttpStatus.CREATED).body(product);
+    }
+
 }

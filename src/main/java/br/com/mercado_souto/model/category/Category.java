@@ -2,7 +2,7 @@ package br.com.mercado_souto.model.category;
 
 import org.hibernate.annotations.SQLRestriction;
 
-import br.com.mercado_souto.util.entity.AuditableEntity;
+import br.com.mercado_souto.util.entity.BaseEntity;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Table;
@@ -20,7 +20,7 @@ import lombok.Setter;
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-public class Category extends AuditableEntity {
+public class Category extends BaseEntity {
     
     @Column
     private String name; 

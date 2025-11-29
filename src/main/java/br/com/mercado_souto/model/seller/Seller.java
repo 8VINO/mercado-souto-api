@@ -9,7 +9,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import br.com.mercado_souto.model.client.Client;
 import br.com.mercado_souto.model.product.Product;
-import br.com.mercado_souto.util.entity.AuditableEntity;
+import br.com.mercado_souto.util.entity.BaseEntity;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.OneToMany;
@@ -30,7 +30,7 @@ import lombok.Setter;
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-public class Seller extends AuditableEntity{
+public class Seller extends BaseEntity{
    
     @OneToOne
     @JsonIgnore

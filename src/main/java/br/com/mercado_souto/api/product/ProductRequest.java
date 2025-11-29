@@ -29,7 +29,7 @@ public class ProductRequest {
     private Long idCategory;
 
    
-    private String imageURL;
+
 
     public Product build(){
         return Product.builder()
@@ -37,7 +37,6 @@ public class ProductRequest {
                         .description(description)
                         .price(price)
                         .stock(stock)
-                        .imageURL(imageURL)
                         .build();
     }
 }

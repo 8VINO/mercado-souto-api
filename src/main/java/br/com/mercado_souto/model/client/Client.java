@@ -6,7 +6,7 @@ import org.hibernate.annotations.SQLRestriction;
 
 import br.com.mercado_souto.model.address.Address;
 import br.com.mercado_souto.model.seller.Seller;
-import br.com.mercado_souto.util.entity.AuditableEntity;
+import br.com.mercado_souto.util.entity.BaseEntity;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.OneToOne;
@@ -26,7 +26,7 @@ import lombok.Setter;
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-public class Client extends AuditableEntity  {
+public class Client extends BaseEntity  {
     @Column
     private String name;
 
