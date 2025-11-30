@@ -32,6 +32,9 @@ import lombok.Setter;
 public class Product extends BaseEntity {
     @ManyToOne
     private Seller seller;
+    
+    @ManyToOne
+    private Category category;
 
     @Column
     private String title;
@@ -47,9 +50,6 @@ public class Product extends BaseEntity {
 
     @Column
     private Integer stock;
-
-    @ManyToOne
-    private Category category;
 
     @ElementCollection
     @Builder.Default

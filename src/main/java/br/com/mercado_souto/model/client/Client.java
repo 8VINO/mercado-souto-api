@@ -4,11 +4,14 @@ import java.util.List;
 
 import org.hibernate.annotations.SQLRestriction;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import br.com.mercado_souto.model.address.Address;
 import br.com.mercado_souto.model.seller.Seller;
 import br.com.mercado_souto.util.entity.BaseEntity;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.OneToMany;
 import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
@@ -27,6 +30,14 @@ import lombok.Setter;
 @AllArgsConstructor
 @NoArgsConstructor
 public class Client extends BaseEntity  {
+    
+    @OneToOne(mappedBy="client")
+    private Seller seller;
+    
+    @OneToMany(mappedBy="client")
+    @JsonIgnore
+    private List<Address> addresses;
+    
     @Column
     private String name;
 
@@ -42,11 +53,6 @@ public class Client extends BaseEntity  {
     @Column
     private String phone;
 
-    @Column
-    private List<Address> addresses;
-    
-    @OneToOne(mappedBy="client")
-    private Seller seller;
     
     
     

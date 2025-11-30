@@ -36,6 +36,10 @@ public class Seller extends BaseEntity{
     @JsonIgnore
     private Client client;
    
+    @JsonIgnore
+    @OneToMany(mappedBy="seller")
+    private List<Product> products; 
+   
     @Column
     private String cnpj;
 
@@ -45,7 +49,4 @@ public class Seller extends BaseEntity{
     @Column
     private BigDecimal balance;
     
-    @JsonIgnore
-    @OneToMany(mappedBy="seller")
-    private List<Product> products; 
 }

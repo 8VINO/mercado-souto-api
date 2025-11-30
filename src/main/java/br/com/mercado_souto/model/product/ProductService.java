@@ -44,6 +44,7 @@ public class ProductService {
         Product product = findById(id);
 
         product.setTitle(modifiedProduct.getTitle());
+        product.setSpecification(modifiedProduct.getSpecification());
         product.setDescription(modifiedProduct.getDescription());
         product.setPrice(modifiedProduct.getPrice());
         product.setStock(modifiedProduct.getStock());

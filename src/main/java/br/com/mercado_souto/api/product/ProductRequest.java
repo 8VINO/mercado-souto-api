@@ -13,30 +13,26 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 public class ProductRequest {
-   
+
     private String title;
 
+    private String specification;
     
     private String description;
 
-   
     private BigDecimal price;
 
-   
     private Integer stock;
 
-    
     private Long idCategory;
 
-   
-
-
-    public Product build(){
+    public Product build() {
         return Product.builder()
-                        .title(title)
-                        .description(description)
-                        .price(price)
-                        .stock(stock)
-                        .build();
+                .title(title)
+                .specification(specification)
+                .description(description)
+                .price(price)
+                .stock(stock)
+                .build();
     }
 }
