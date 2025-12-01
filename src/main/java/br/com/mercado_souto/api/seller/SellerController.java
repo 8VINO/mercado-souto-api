@@ -15,7 +15,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-
+import br.com.mercado_souto.model.client.ClientService;
 import br.com.mercado_souto.model.seller.Seller;
 import br.com.mercado_souto.model.seller.SellerService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -31,6 +31,9 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 public class SellerController {
     @Autowired
     private SellerService sellerService;
+   
+    @Autowired
+    private ClientService clientService;
 
       @Operation(
        summary = "Endpoint responsible for registering a seller",
@@ -38,7 +41,9 @@ public class SellerController {
    )
     @PostMapping("/{idClient}")
     public ResponseEntity<Seller> create(@PathVariable Long idClient, @RequestBody SellerRequest request){
-        Seller seller=sellerService.create(idClient, request.build());
+        Seller newSeller=request.build();
+        newSeller.setClient(clientService.findById(idClient));
+        Seller seller=sellerService.create(newSeller);
 
         return ResponseEntity.status(HttpStatus.CREATED).body(seller);
     }

@@ -5,8 +5,8 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import br.com.mercado_souto.model.client.Client;
-import br.com.mercado_souto.model.client.ClientRepository;
+import br.com.mercado_souto.model.acess.Role;
+import br.com.mercado_souto.model.acess.RoleRepository;
 import br.com.mercado_souto.util.exception.EntityNotFoundException;
 import jakarta.transaction.Transactional;
 
@@ -16,14 +16,13 @@ public class SellerService {
     private SellerRepository sellerRepository;
 
     @Autowired
-    private ClientRepository clientRepository;
+    private RoleRepository roleRepository;
 
     @Transactional
-    public Seller create(Long idClient,Seller seller){
-        Client clientSeller=clientRepository.findById(idClient)
-            .orElseThrow(()-> new EntityNotFoundException("Client",idClient));
+    public Seller create(Seller seller){
 
-        seller.setClient(clientSeller);
+        Role sellerRole = roleRepository.findByName(Role.ROLE_SELLER);
+        seller.getClient().getUser().getRoles().add(sellerRole);
         seller.setActive(Boolean.TRUE);
         
         return sellerRepository.save(seller);
