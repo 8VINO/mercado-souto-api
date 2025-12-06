@@ -7,6 +7,7 @@ import org.springframework.stereotype.Service;
 
 import br.com.mercado_souto.model.acess.Role;
 import br.com.mercado_souto.model.acess.RoleRepository;
+import br.com.mercado_souto.model.acess.User;
 import br.com.mercado_souto.model.acess.UserService;
 import br.com.mercado_souto.util.exception.EntityNotFoundException;
 import jakarta.transaction.Transactional;
@@ -44,6 +45,13 @@ public class ClientService {
         Client client = clientRepository.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException("Client", id));
 
+        return client;
+    }
+
+    public Client findByUser(User user) {
+        Client client = clientRepository.findByUser(user)
+                        .orElseThrow(() -> new EntityNotFoundException("Client", user));
+              
         return client;
     }
 
