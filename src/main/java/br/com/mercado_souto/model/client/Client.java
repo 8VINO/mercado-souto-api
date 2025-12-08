@@ -7,9 +7,11 @@ import org.hibernate.annotations.FetchMode;
 import org.hibernate.annotations.SQLRestriction;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 import br.com.mercado_souto.model.acess.User;
 import br.com.mercado_souto.model.address.Address;
+import br.com.mercado_souto.model.cart.Cart;
 import br.com.mercado_souto.model.seller.Seller;
 import br.com.mercado_souto.util.entity.BaseEntity;
 import jakarta.persistence.Column;
@@ -44,8 +46,11 @@ public class Client extends BaseEntity {
 
     @OneToMany(mappedBy = "client")
     @Fetch(FetchMode.SUBSELECT)
-    @JsonIgnore
+    @JsonIgnoreProperties({"client"})
     private List<Address> addresses;
+
+    @OneToOne(mappedBy = "client")
+    private Cart cart;
 
     @Column
     private String name;
@@ -54,6 +59,7 @@ public class Client extends BaseEntity {
     private String email;
 
     @Column
+    @JsonIgnore
     private String password;
 
     @Column

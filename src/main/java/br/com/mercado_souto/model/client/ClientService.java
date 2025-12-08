@@ -9,6 +9,8 @@ import br.com.mercado_souto.model.acess.Role;
 import br.com.mercado_souto.model.acess.RoleRepository;
 import br.com.mercado_souto.model.acess.User;
 import br.com.mercado_souto.model.acess.UserService;
+import br.com.mercado_souto.model.cart.Cart;
+import br.com.mercado_souto.model.cart.CartService;
 import br.com.mercado_souto.util.exception.EntityNotFoundException;
 import jakarta.transaction.Transactional;
 
@@ -19,6 +21,8 @@ public class ClientService {
 
     @Autowired
     private UserService userService;
+    @Autowired
+    private CartService cartService;
 
     @Autowired
     private RoleRepository roleRepository;
@@ -33,7 +37,10 @@ public class ClientService {
 
         client.setActive(Boolean.TRUE);
 
-        return clientRepository.save(client);
+        Client clientCreated=clientRepository.save(client);
+        Cart newCart=cartService.create(clientCreated);
+        clientCreated.setCart(newCart);
+        return clientRepository.save(clientCreated);
     }
 
     public List<Client> findAll() {
