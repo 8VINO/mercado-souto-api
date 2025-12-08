@@ -8,11 +8,9 @@ import org.hibernate.annotations.SQLRestriction;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
-
 import br.com.mercado_souto.model.client.Client;
 import br.com.mercado_souto.util.entity.BaseEntity;
 import jakarta.persistence.CascadeType;
-import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.OneToOne;
@@ -22,6 +20,7 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+
 @Entity
 @Table(name = "Cart")
 @SQLRestriction("active = true")
@@ -40,6 +39,14 @@ public class Cart extends BaseEntity {
     @Builder.Default
     private List<CartItem> items = new ArrayList<>();
 
-    @Column
-    private BigDecimal totalPrice;
+    public BigDecimal getTotalPrice() {
+        if (this.items == null || this.items.isEmpty()) {
+            return BigDecimal.ZERO;
+        }
+
+        return this.items.stream()
+                .filter(item -> item.getIsSelected().equals(Boolean.TRUE))
+                .map(CartItem::getSubtotal)
+                .reduce(BigDecimal.ZERO, BigDecimal::add);
+    }
 }

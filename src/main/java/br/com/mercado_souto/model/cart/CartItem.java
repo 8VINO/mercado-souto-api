@@ -42,5 +42,10 @@ public class CartItem  {
 
     private Integer quantity;
 
-    private BigDecimal subtotal;
+   public BigDecimal getSubtotal() {
+        if (this.product == null || this.product.getPrice() == null || this.quantity == null) {
+            return BigDecimal.ZERO;
+        }
+        return this.product.getPrice().multiply(BigDecimal.valueOf(this.quantity));
+    }
 }

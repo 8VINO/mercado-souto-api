@@ -7,6 +7,9 @@ import br.com.mercado_souto.model.acess.User;
 
 @ResponseStatus(code = HttpStatus.NOT_FOUND)
 public class EntityNotFoundException extends RuntimeException{
+    public EntityNotFoundException(Long itemId) {
+        super(String.format("CardItem not found with product id %s", itemId));
+    }
     public EntityNotFoundException(String entity, Long id) {
         super(String.format("Entity %s not found with id %s", entity, id));
     }
