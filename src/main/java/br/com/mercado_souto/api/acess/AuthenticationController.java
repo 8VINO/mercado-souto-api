@@ -15,10 +15,16 @@ import br.com.mercado_souto.model.acess.User;
 import br.com.mercado_souto.model.acess.UserService;
 import br.com.mercado_souto.model.client.ClientService;
 import br.com.mercado_souto.model.security.JwtService;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 
 @RestController
 @RequestMapping("/api/login")
 @CrossOrigin
+@Tag(
+    name = "Login API ",
+    description = "API responsible for authenticating users in the system"
+)
 public class AuthenticationController {
     @Autowired
     private ClientService clientService;
@@ -32,6 +38,10 @@ public class AuthenticationController {
         this.userService = userService;
     }
 
+    @Operation(
+    summary = "Endpoint responsible for receiving and validating login data.",
+    description = "Receives login attempt data, validates whether the credentials are correct, and returns user information such as token and role."
+)
     @PostMapping
     public Map<Object, Object> login(@RequestBody AuthenticationRequest data) {
 
