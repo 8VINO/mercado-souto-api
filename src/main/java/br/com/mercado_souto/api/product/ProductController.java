@@ -17,6 +17,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
+
 import br.com.mercado_souto.model.category.CategoryService;
 import br.com.mercado_souto.model.product.Product;
 import br.com.mercado_souto.model.product.ProductService;
@@ -128,5 +129,16 @@ public class ProductController {
         Product product = productService.saveImage(id, image);
         return ResponseEntity.status(HttpStatus.CREATED).body(product);
     }
+
+    @GetMapping("/by-category/{categoryId}")
+    public ResponseEntity<List<Product>> findProductByCategory(@PathVariable Long categoryId) {
+
+        categoryService.findById(categoryId);
+        
+        List<Product> list = productService.findProductByCategory(categoryId);
+
+        return ResponseEntity.status(HttpStatus.OK).body(list);
+    }
+    
 
 }

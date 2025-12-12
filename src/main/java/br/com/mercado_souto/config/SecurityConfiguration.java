@@ -38,14 +38,22 @@ public class SecurityConfiguration {
 
                 .requestMatchers(HttpMethod.POST, "/api/client").permitAll()
                 .requestMatchers(HttpMethod.POST, "/api/seller").permitAll()
-                .requestMatchers("/images/**").permitAll()
                 .requestMatchers(HttpMethod.POST, "/api/login").permitAll()
+                
+                .requestMatchers(HttpMethod.GET, "/api/product").permitAll()
+                .requestMatchers(HttpMethod.GET, "/api/product/*").permitAll()
+                .requestMatchers(HttpMethod.GET, "/api/product/by-seller/*").permitAll()
+                .requestMatchers(HttpMethod.GET, "/api/product/category/*").permitAll()
 
+                .requestMatchers(HttpMethod.GET, "/api/category").permitAll()
+                
                 .requestMatchers(HttpMethod.GET, "/api-docs/*").permitAll()
                 .requestMatchers(HttpMethod.GET, "/swagger-ui/*").permitAll()
 
+                .requestMatchers("/images/**").permitAll()
+                
                 .anyRequest().authenticated()
-
+                
             )
             .sessionManagement((session) -> session
                 .sessionCreationPolicy(SessionCreationPolicy.STATELESS)

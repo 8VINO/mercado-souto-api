@@ -33,8 +33,8 @@ public class RoleInitializer implements CommandLineRunner {
 
             roleRepository.save(role);
 
-        } catch (Exception ignored) {
-
+        } catch (Exception e) {
+            System.err.println("Error initializing role " + roleName + ": " + e.getMessage());
         }
     }
 }
