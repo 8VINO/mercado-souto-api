@@ -129,7 +129,10 @@ public class ProductController {
         Product product = productService.saveImage(id, image);
         return ResponseEntity.status(HttpStatus.CREATED).body(product);
     }
-
+     @Operation(
+       summary = "Endpoint responsible for getting all products from a  category",
+       description = "Receives the category id and returns a list of products."
+   )
     @GetMapping("/by-category/{categoryId}")
     public ResponseEntity<List<Product>> findProductByCategory(@PathVariable Long categoryId) {
 
