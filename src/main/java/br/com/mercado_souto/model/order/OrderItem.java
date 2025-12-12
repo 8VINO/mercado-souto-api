@@ -1,4 +1,4 @@
-package br.com.mercado_souto.model.cart;
+package br.com.mercado_souto.model.order;
 
 import java.math.BigDecimal;
 
@@ -18,43 +18,34 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+
 @Entity
-@Table(name = "cart-item")
+@Table(name = "order-item")
 
 @Builder
 @Getter
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-public class CartItem {
+public class OrderItem {
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE)
     private Long id;
 
     @ManyToOne
     @JsonIgnore
-    private Cart cart;
-    
-    @Column
-    private Boolean isSelected;
-    
+    private Order order;
+
     @ManyToOne
     private Product product;
     
-    @Column
+    @Column(nullable = false)
+    private BigDecimal unitPrice;
+    
+    @Column(nullable = false)
     private Integer quantity;
 
-    public BigDecimal getUnitPrice() {
-        if (this.product == null || this.product.getPrice() == null) {
-            return BigDecimal.ZERO;
-        }
-        return this.product.getPrice();
-    }
+    @Column(nullable = false)
+    private BigDecimal subTotal;
 
-    public BigDecimal getSubtotal() {
-        if (this.quantity == null || quantity <= 0) {
-            return BigDecimal.ZERO;
-        }
-        return getUnitPrice().multiply(BigDecimal.valueOf(this.quantity));
-    }
 }

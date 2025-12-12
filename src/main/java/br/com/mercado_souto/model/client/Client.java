@@ -12,6 +12,7 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import br.com.mercado_souto.model.acess.User;
 import br.com.mercado_souto.model.address.Address;
 import br.com.mercado_souto.model.cart.Cart;
+import br.com.mercado_souto.model.order.Order;
 import br.com.mercado_souto.model.seller.Seller;
 import br.com.mercado_souto.util.entity.BaseEntity;
 import jakarta.persistence.Column;
@@ -51,6 +52,9 @@ public class Client extends BaseEntity {
 
     @OneToOne(mappedBy = "client")
     private Cart cart;
+
+    @OneToMany(mappedBy = "client")
+    private List<Order> orders;
 
     @Column
     private String name;
