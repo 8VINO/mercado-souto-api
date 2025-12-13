@@ -3,6 +3,7 @@ package br.com.mercado_souto.api.product;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
@@ -16,7 +17,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
-
 
 import br.com.mercado_souto.model.category.CategoryService;
 import br.com.mercado_souto.model.product.Product;
@@ -140,6 +140,18 @@ public class ProductController {
         
         List<Product> list = productService.findProductByCategory(categoryId);
 
+        return ResponseEntity.status(HttpStatus.OK).body(list);
+    }
+    
+    @Operation(
+       summary = "Endpoint responsible for searching products",
+       description = "Searches for products based on the provided title and returns a list of products. The results can be dynamically sorted using the 'sort' query parameter, allowing ordering by one or more fields in ascending or descending order."+
+       "Ex:/api/product/search?title=samsung&sort=price,desc"
+   )
+    @GetMapping("/search")
+    public ResponseEntity<List<Product>> search(@RequestParam String title, Sort sort) {
+        
+        List<Product> list = productService.search(title, sort);
         return ResponseEntity.status(HttpStatus.OK).body(list);
     }
     

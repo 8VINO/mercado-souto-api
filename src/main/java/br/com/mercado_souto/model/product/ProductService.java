@@ -2,8 +2,8 @@ package br.com.mercado_souto.model.product;
 
 import java.util.List;
 
-
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -77,8 +77,11 @@ public class ProductService {
         return productRepository.save(product);
     }
 
-    public List<Product> findProductByCategory(Long categoryId){
+    public List<Product> findProductByCategory(Long categoryId) {
         return productRepository.findByCategoryId(categoryId);
     }
 
+    public List<Product> search(String title, Sort sort) {
+        return productRepository.findByTitleContainingIgnoreCase(title, sort);
+    }
 }
