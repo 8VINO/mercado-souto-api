@@ -1,5 +1,7 @@
 package br.com.mercado_souto.model.client;
 
+
+import java.util.Collections;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -11,6 +13,8 @@ import br.com.mercado_souto.model.acess.User;
 import br.com.mercado_souto.model.acess.UserService;
 import br.com.mercado_souto.model.cart.Cart;
 import br.com.mercado_souto.model.cart.CartService;
+import br.com.mercado_souto.model.order.Order;
+import br.com.mercado_souto.model.product.Product;
 import br.com.mercado_souto.util.exception.EntityNotFoundException;
 import jakarta.transaction.Transactional;
 
@@ -83,5 +87,39 @@ public class ClientService {
         client.setActive(Boolean.FALSE);
 
         clientRepository.save(client);
+    }
+
+    @Transactional
+    public Boolean addFavoriteProduct(Client client,Product product){
+        if(client.getFavoriteProducts().contains(product)){
+            return false;
+        }
+        client.getFavoriteProducts().add(product);
+        clientRepository.save(client);
+        return true;
+    }
+
+    @Transactional
+    public Boolean removeFavoriteProduct(Client client,Product product){
+        if(!client.getFavoriteProducts().contains(product)){
+            return false;
+        }
+        client.getFavoriteProducts().remove(product);
+        clientRepository.save(client);
+        return true;
+    
+    }
+    @Transactional
+    public List<Product> getFavoriteProducts(Client client){
+        List<Product> list = client.getFavoriteProducts();
+        Collections.reverse(list);
+       return list;
+    }
+
+    @Transactional
+    public List<Order> getOrders(Client client){
+        List<Order> list = client.getOrders();
+        Collections.reverse(list);
+       return list;
     }
 }

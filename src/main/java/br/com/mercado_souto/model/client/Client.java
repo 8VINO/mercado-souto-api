@@ -1,6 +1,8 @@
 package br.com.mercado_souto.model.client;
 
+import java.util.ArrayList;
 import java.util.List;
+
 
 import org.hibernate.annotations.Fetch;
 import org.hibernate.annotations.FetchMode;
@@ -13,11 +15,14 @@ import br.com.mercado_souto.model.acess.User;
 import br.com.mercado_souto.model.address.Address;
 import br.com.mercado_souto.model.cart.Cart;
 import br.com.mercado_souto.model.order.Order;
+import br.com.mercado_souto.model.product.Product;
 import br.com.mercado_souto.model.seller.Seller;
 import br.com.mercado_souto.util.entity.BaseEntity;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.JoinColumn;
+import jakarta.persistence.JoinTable;
+import jakarta.persistence.ManyToMany;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
@@ -47,14 +52,21 @@ public class Client extends BaseEntity {
 
     @OneToMany(mappedBy = "client")
     @Fetch(FetchMode.SUBSELECT)
-    @JsonIgnoreProperties({"client"})
-    private List<Address> addresses;
+    @JsonIgnoreProperties({ "client" })
+    @Builder.Default
+    private List<Address> addresses = new ArrayList<>();
 
     @OneToOne(mappedBy = "client")
     private Cart cart;
 
     @OneToMany(mappedBy = "client")
-    private List<Order> orders;
+    @Builder.Default
+    private List<Order> orders= new ArrayList<>();;
+
+    @ManyToMany
+    @JoinTable(name = "client_favorite_products", joinColumns = @JoinColumn(name = "client_id"), inverseJoinColumns = @JoinColumn(name = "product_id"))
+    @Builder.Default
+    private List<Product> favoriteProducts = new ArrayList<>();
 
     @Column
     private String name;

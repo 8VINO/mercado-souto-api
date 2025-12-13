@@ -21,6 +21,9 @@ import br.com.mercado_souto.model.acess.Role;
 import br.com.mercado_souto.model.acess.User;
 import br.com.mercado_souto.model.client.Client;
 import br.com.mercado_souto.model.client.ClientService;
+import br.com.mercado_souto.model.order.Order;
+import br.com.mercado_souto.model.product.Product;
+import br.com.mercado_souto.model.product.ProductService;
 import br.com.mercado_souto.model.security.JwtService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -35,6 +38,8 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 public class ClientController {
     @Autowired
     private ClientService clientService;
+    @Autowired
+    private ProductService productService;
 
     @Autowired
     private  JwtService jwtService;
@@ -110,5 +115,65 @@ public class ClientController {
         clientService.delete(id);
 
         return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
+    }
+
+    @Operation(
+        summary = "Endpoint responsible for adding a product to favorites",
+        description = "Receives the client id and product id, and returns status 200 if the product was added, or 409 if the product is already in favorites"
+    )
+    @PostMapping("{clientId}/favorite-product/{productId}")
+    public ResponseEntity<String> addFavoriteProduct (@PathVariable Long clientId, @PathVariable Long productId){
+        Client client=clientService.findById(clientId);
+        Product product=productService.findById(productId);
+
+        Boolean added = clientService.addFavoriteProduct(client, product);
+
+        if(!added){
+            return ResponseEntity.status(HttpStatus.CONFLICT).body("Product is already in favorites");
+        }
+        return ResponseEntity.status(HttpStatus.OK).body("Product added to favorites");
+    }
+
+    @Operation(
+        summary = "Endpoint responsible for removing a product from favorites",
+        description = "Receives the client id and product id, and returns status 200 if the product was removed, or 404 if the product was not found in favorites"
+    )
+    @DeleteMapping("{clientId}/favorite-product/{productId}")
+    public ResponseEntity<String> removeFavoriteProduct (@PathVariable Long clientId, @PathVariable Long productId){
+        Client client=clientService.findById(clientId);
+        Product product=productService.findById(productId);
+
+        Boolean removed = clientService.removeFavoriteProduct(client, product);
+
+        if(!removed){
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Product is not in favorites");
+        }
+        return ResponseEntity.status(HttpStatus.OK).body("Product removed from favorites");
+    }
+
+    @Operation(
+       summary = "Endpoint responsible for getting favorite products",
+       description = "Returns a list of products"
+   )
+    @GetMapping("{clientId}/favorite-products")
+    public ResponseEntity<List<Product>> getFavoriteProducts (@PathVariable Long clientId){
+        Client client=clientService.findById(clientId);
+
+        List<Product> list = clientService.getFavoriteProducts(client);
+
+        return ResponseEntity.status(HttpStatus.OK).body(list);
+    }
+
+    @Operation(
+       summary = "Endpoint responsible for getting all orders",
+       description = "Returns a list of orders"
+   )
+    @GetMapping("{clientId}/orders")
+    public ResponseEntity<List<Order>> getOrders (@PathVariable Long clientId){
+        Client client=clientService.findById(clientId);
+
+        List<Order> list = clientService.getOrders(client);
+
+        return ResponseEntity.status(HttpStatus.OK).body(list);
     }
 }
