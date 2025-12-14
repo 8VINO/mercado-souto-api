@@ -1,6 +1,8 @@
 package br.com.mercado_souto.model.cart;
 
+import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -81,5 +83,18 @@ public class CartService {
     public Cart findById(Long cartId) {
         return cartRepository.findById(cartId)
                 .orElseThrow(() -> new EntityNotFoundException("Cart", cartId));
+    }
+
+    @Transactional
+    public Cart removeSelectedItems(Cart cart) {
+        
+    List<CartItem> itemsToRemove = cart.getItems().stream()
+        .filter(CartItem::getIsSelected) 
+        .collect(Collectors.toList());
+        
+    cart.getItems().removeAll(itemsToRemove);
+    
+   
+    return cartRepository.save(cart);
     }
 }

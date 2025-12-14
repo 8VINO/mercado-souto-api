@@ -10,7 +10,12 @@ import org.springframework.stereotype.Service;
 import br.com.mercado_souto.model.address.Address;
 import br.com.mercado_souto.model.cart.Cart;
 import br.com.mercado_souto.model.cart.CartItem;
+import br.com.mercado_souto.model.cart.CartService;
 import br.com.mercado_souto.model.product.Product;
+import br.com.mercado_souto.model.product.ProductService;
+import br.com.mercado_souto.model.seller.Seller;
+import br.com.mercado_souto.model.seller.SellerService;
+import br.com.mercado_souto.util.exception.EntityNotFoundException;
 import jakarta.transaction.Transactional;
 
 @Service
@@ -18,6 +23,15 @@ public class OrderService {
 
         @Autowired
         private OrderRepository orderRepository;
+
+        @Autowired
+        private SellerService sellerService;
+
+        @Autowired
+        private ProductService productService;
+       
+        @Autowired
+        private CartService cartService;
 
         @Transactional
         public Order placeOrderFromCart(Cart cart, Address clientAddress) {
@@ -40,8 +54,8 @@ public class OrderService {
                 newOrder.setTotalPrice(finalPrice);
 
                 Order savedOrder = orderRepository.save(newOrder);
-
-                // cartService.clearCart(cart);
+                paymentOrder(savedOrder);
+                cartService.removeSelectedItems(cart);
 
                 return savedOrder;
 
@@ -59,19 +73,19 @@ public class OrderService {
                                 .status(OrderStatus.PENDING)
                                 .build();
 
-                OrderItem newOrderItem=OrderItem.builder()
+                OrderItem newOrderItem = OrderItem.builder()
                                 .order(newOrder)
                                 .product(product)
                                 .unitPrice(unitPriceAtOrderTime)
                                 .quantity(quantity)
                                 .subTotal(subtotalAtOrderTime)
                                 .build();
-                
-                List<OrderItem> orderItems = List.of(newOrderItem);
+
+                List<OrderItem> orderItems = new java.util.ArrayList<>(List.of(newOrderItem));
                 newOrder.setOrderItems(orderItems);
                 newOrder.setTotalPrice(subtotalAtOrderTime);
-
                 Order savedOrder = orderRepository.save(newOrder);
+                paymentOrder(savedOrder);
 
                 return savedOrder;
         }
@@ -90,6 +104,43 @@ public class OrderService {
                                 .quantity(cartItem.getQuantity())
                                 .subTotal(subtotalAtOrderTime)
                                 .build();
+        }
+
+        @Transactional
+        public Order paymentOrder(Order order) {
+
+                processOrderItems(order);
+
+                order.setStatus(OrderStatus.PAID);
+
+                Order savedOrder = orderRepository.save(order);
+
+                return savedOrder;
+        }
+
+        @Transactional
+        public Order findById(Long orderId) {
+                Order order = orderRepository.findById(orderId)
+                                .orElseThrow(() -> new EntityNotFoundException("Order", orderId));
+                return order;
+        }
+
+        private void processOrderItems(Order order) {
+
+                for (OrderItem item : order.getOrderItems()) {
+
+                        Product product = item.getProduct();
+                        Seller seller = product.getSeller(); 
+
+                        int quantitySold = item.getQuantity();
+                        BigDecimal amountSold = item.getSubTotal();
+
+                        productService.decrementStock(product.getId(), quantitySold);
+
+                        BigDecimal amountToCredit = amountSold;
+
+                        sellerService.increaseBalance(seller.getId(), amountToCredit);
+                }
         }
 
 }

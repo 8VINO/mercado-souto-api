@@ -1,5 +1,6 @@
 package br.com.mercado_souto.model.seller;
 
+import java.math.BigDecimal;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -66,4 +67,21 @@ public class SellerService {
         sellerRepository.save(seller);
     }
 
+    @Transactional
+    public Seller increaseBalance(Long sellerId, BigDecimal amount) {
+        
+        Seller seller = findById(sellerId);
+      
+        BigDecimal currentBalance = seller.getBalance() != null ? seller.getBalance() : BigDecimal.ZERO;
+       
+        seller.setBalance(currentBalance.add(amount));
+     
+        Integer currentSales = seller.getSales() != null ? seller.getSales() : 0;
+        
+     
+        seller.setSales(currentSales + 1);
+        
+     
+        return sellerRepository.save(seller);
+    }
 }

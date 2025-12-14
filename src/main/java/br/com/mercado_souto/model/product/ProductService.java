@@ -84,4 +84,18 @@ public class ProductService {
     public List<Product> search(String title, Sort sort) {
         return productRepository.findByTitleContainingIgnoreCase(title, sort);
     }
+
+    @Transactional
+    public void decrementStock(Long productId, Integer quantity) {
+        Product product = findById(productId);
+        int currentStock = product.getStock();
+        
+        if (currentStock < quantity) {
+            throw new RuntimeException("Insufficient stock for product " + product.getTitle() + ". Current stock: " + currentStock );
+        }
+        
+        product.setStock(currentStock - quantity);
+        
+        productRepository.save(product); 
+    }
 }

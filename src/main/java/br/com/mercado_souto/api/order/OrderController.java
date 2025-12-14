@@ -1,6 +1,8 @@
 package br.com.mercado_souto.api.order;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -46,12 +48,12 @@ public class OrderController {
     description = "Receives the cart id and the selected client address id, and returns the order."
     )
     @PostMapping("/cart/{cartId}/address/{clientAddressId}")
-    public Order placeOrderFromCart(@PathVariable Long cartId, @PathVariable Long clientAddressId) {
+    public ResponseEntity<Order> placeOrderFromCart(@PathVariable Long cartId, @PathVariable Long clientAddressId) {
         
         Cart cart = cartService.findById(cartId);
         Address address = addressService.findById(clientAddressId);
-
-        return orderService.placeOrderFromCart(cart, address);
+        Order order = orderService.placeOrderFromCart(cart, address);
+        return ResponseEntity.status(HttpStatus.OK).body(order);
         
     }
 
@@ -60,12 +62,12 @@ public class OrderController {
     description = "Receives the product id and quantity in the request body, along with the selected client address id, and returns the order."
     )
     @PostMapping("/product/{productId}/address/{clientAddressId}")
-    public Order placeDirectOrder(@PathVariable Long productId, @PathVariable Long clientAddressId, @RequestBody @Valid OrderRequest request) {
+    public ResponseEntity<Order> placeDirectOrder(@PathVariable Long productId, @PathVariable Long clientAddressId, @RequestBody @Valid OrderRequest request) {
         
         Product product = productService.findById(productId);
         Address clientAddress = addressService.findById(clientAddressId);
-
-        return orderService.placeDirectOrder(product, clientAddress, request.getQuantity());
+        Order order = orderService.placeDirectOrder(product, clientAddress, request.getQuantity());
+        return ResponseEntity.status(HttpStatus.OK).body(order);
         
     }
     
