@@ -19,6 +19,7 @@ import br.com.mercado_souto.model.category.Category;
 import br.com.mercado_souto.model.category.CategoryService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.validation.Valid;
 
 @RestController
 @RequestMapping("/api/category")
@@ -31,15 +32,13 @@ public class CategoryController {
     
     @Autowired
     private CategoryService categoryService;
-
-    
      
      @Operation(
        summary = "Endpoint responsible for creating a category",
        description = "Receives the category data in the request body, creates and return the category."
    )
     @PostMapping
-    public ResponseEntity<Category> create (@RequestBody  CategoryRequest request){
+    public ResponseEntity<Category> create (@RequestBody @Valid CategoryRequest request){
         Category category = categoryService.create (request.build());
         return  ResponseEntity.status(HttpStatus.CREATED).body(category);
     }
@@ -71,7 +70,7 @@ public class CategoryController {
        description = "Receives the category id and returns the updated category."
    )
     @PutMapping("/{id}")
-    public ResponseEntity<Category> update(@PathVariable Long id, @RequestBody CategoryRequest request){
+    public ResponseEntity<Category> update(@PathVariable Long id, @RequestBody @Valid CategoryRequest request){
         Category category = categoryService.update(id,request.build());
 
         return ResponseEntity.status(HttpStatus.OK).body(category);

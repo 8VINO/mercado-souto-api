@@ -22,7 +22,7 @@ import lombok.Setter;
 @NoArgsConstructor
 public class Category extends BaseEntity {
     
-    @Column
+    @Column(unique = true, nullable = false, length = 50)
     private String name; 
     
 }

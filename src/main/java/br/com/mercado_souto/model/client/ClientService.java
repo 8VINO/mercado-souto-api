@@ -15,6 +15,7 @@ import br.com.mercado_souto.model.cart.Cart;
 import br.com.mercado_souto.model.cart.CartService;
 import br.com.mercado_souto.model.order.Order;
 import br.com.mercado_souto.model.product.Product;
+import br.com.mercado_souto.util.exception.DataAlreadyExistsException;
 import br.com.mercado_souto.util.exception.EntityNotFoundException;
 import jakarta.transaction.Transactional;
 
@@ -33,6 +34,15 @@ public class ClientService {
 
     @Transactional
     public Client create(Client client) {
+
+        String username = client.getUser().getUsername();
+        if (userService.exists(username)) {
+            throw new DataAlreadyExistsException("EMAIL");
+        }
+        if (clientRepository.existsByCpf(client.getCpf())) {
+            throw new DataAlreadyExistsException("CPF");
+        }
+
 
         Role clientRole= roleRepository.findByName(Role.ROLE_CLIENT);
         client.getUser().getRoles().add(clientRole);

@@ -27,6 +27,7 @@ import br.com.mercado_souto.model.product.ProductService;
 import br.com.mercado_souto.model.security.JwtService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.validation.Valid;
 
 @RestController
 @RequestMapping("/api/client")
@@ -50,7 +51,7 @@ public class ClientController {
    )
 
     @PostMapping
-    ResponseEntity<Map<Object, Object>> create(@RequestBody ClientRequest request ){
+    ResponseEntity<Map<Object, Object>> create(@RequestBody @Valid ClientRequest request ){
 
         Client clientCreated = clientService.create(request.build());
        
@@ -98,7 +99,7 @@ public class ClientController {
        description = "Receives the client id and returns the updated client."
    )
     @PutMapping("/{id}")
-    ResponseEntity<Client> update(@PathVariable Long id, @RequestBody ClientRequest request){
+    ResponseEntity<Client> update(@PathVariable Long id, @RequestBody @Valid ClientRequest request){
 
         Client client = clientService.update(id, request.build());
 

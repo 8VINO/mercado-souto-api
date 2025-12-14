@@ -10,6 +10,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import jakarta.transaction.Transactional;
+
 @Service
 public class UserService implements UserDetailsService {
     @Autowired
@@ -26,6 +27,7 @@ public class UserService implements UserDetailsService {
         this.repository = userRepository;
         this.passwordEncoder = passwordEncoder;
     }
+
     public User authenticate(String username, String password) {
 
         authenticationManager.authenticate(
@@ -37,13 +39,19 @@ public class UserService implements UserDetailsService {
     @Transactional
     public User findByUsername(String username) {
 
-        return repository.findByUsername(username).get();
+        return repository.findByUsername(username)
+                .orElseThrow(() -> new UsernameNotFoundException("User not found: " + username));
+    }
+
+    public boolean exists(String username) {
+        return repository.existsByUsername(username);
     }
 
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
 
-        return repository.findByUsername(username).get();
+        return repository.findByUsername(username)
+                .orElseThrow(() -> new UsernameNotFoundException("User not found: " + username));
     }
 
     @Transactional
@@ -53,6 +61,5 @@ public class UserService implements UserDetailsService {
         user.setActive(Boolean.TRUE);
         return repository.save(user);
     }
-
 
 }

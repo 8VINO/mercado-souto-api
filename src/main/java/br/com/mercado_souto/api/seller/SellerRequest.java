@@ -1,8 +1,9 @@
 package br.com.mercado_souto.api.seller;
 
-import java.math.BigDecimal;
+import org.hibernate.validator.constraints.br.CNPJ;
 
 import br.com.mercado_souto.model.seller.Seller;
+import jakarta.validation.constraints.NotBlank;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -14,17 +15,13 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 public class SellerRequest {
 
+    @NotBlank(message = "O CNPJ é obrigatório")
+    @CNPJ(message = "CNPJ inválido. Ex: 99.999.999/9999-99 ou 14 dígitos numéricos VÁLIDOS.")
     private String cnpj;
 
-    private Integer sales;
-
-    private BigDecimal balance;
-
-    public Seller build(){
+    public Seller build() {
         return Seller.builder()
-                        .cnpj(cnpj)
-                        .sales(sales)
-                        .balance(balance)
-                        .build();
+                .cnpj(cnpj)
+                .build();
     }
 }

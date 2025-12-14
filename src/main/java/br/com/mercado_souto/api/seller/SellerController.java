@@ -20,6 +20,7 @@ import br.com.mercado_souto.model.seller.Seller;
 import br.com.mercado_souto.model.seller.SellerService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.validation.Valid;
 
 @CrossOrigin
 @RestController
@@ -40,7 +41,7 @@ public class SellerController {
        description = "Receives the client id who wants to become a seller, creates the seller, and returns the seller."
    )
     @PostMapping("/{idClient}")
-    public ResponseEntity<Seller> create(@PathVariable Long idClient, @RequestBody SellerRequest request){
+    public ResponseEntity<Seller> create(@PathVariable Long idClient, @RequestBody @Valid SellerRequest request){
         Seller newSeller=request.build();
         newSeller.setClient(clientService.findById(idClient));
         Seller seller=sellerService.create(newSeller);
@@ -77,7 +78,7 @@ public class SellerController {
        description = "Receives the seller id and returns the updated seller."
    )
     @PutMapping("/{id}")
-    ResponseEntity<Seller> update(@PathVariable Long id, @RequestBody SellerRequest request){
+    ResponseEntity<Seller> update(@PathVariable Long id, @RequestBody @Valid SellerRequest request){
 
         Seller seller = sellerService.update(id, request.build());
 

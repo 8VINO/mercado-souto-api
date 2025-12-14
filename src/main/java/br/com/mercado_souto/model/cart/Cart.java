@@ -12,6 +12,8 @@ import br.com.mercado_souto.model.client.Client;
 import br.com.mercado_souto.util.entity.BaseEntity;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
+import jakarta.persistence.JoinColumn;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
@@ -31,7 +33,9 @@ import lombok.Setter;
 @AllArgsConstructor
 @NoArgsConstructor
 public class Cart extends BaseEntity {
-    @OneToOne
+    
+    @OneToOne(fetch = FetchType.LAZY)
+    @JoinColumn(nullable = false)
     @JsonIgnore
     private Client client;
 

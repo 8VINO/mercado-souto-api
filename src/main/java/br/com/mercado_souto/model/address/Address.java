@@ -26,31 +26,31 @@ import lombok.Setter;
 @NoArgsConstructor
 public class Address extends BaseEntity {
 
-    @ManyToOne
+    @ManyToOne(optional = false)
     @JsonIgnore
     private Client client;
 
-    @Column
+    @Column(nullable = false, length = 9)
     private String cep;
 
-    @Column
+    @Column(nullable = false, length = 150)
     private String street;
 
-    @Column
+    @Column(nullable = false, length = 10)
     private String number;
 
-    @Column
+    @Column(length = 50)
     private String complement;
 
-    @Column
+    @Column(length = 100)
     private String additionalInfo;
 
-    @Column
+    @Column(nullable = false)
     private Boolean home;
 
-    @Column
+    @Column(nullable = false, length = 70)
     private String contactName;
 
-    @Column
+    @Column(nullable = false, length = 16)
     private String contactPhone;
 }

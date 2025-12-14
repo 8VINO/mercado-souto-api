@@ -31,25 +31,25 @@ import lombok.Setter;
 @AllArgsConstructor
 @NoArgsConstructor
 public class Product extends BaseEntity {
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.EAGER, optional = false)
     private Seller seller;
     
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.EAGER, optional = false)
     private Category category;
 
-    @Column
+    @Column(nullable = false, length = 100)
     private String title;
 
     @Column(columnDefinition = "TEXT")
     private String specification;
 
-    @Column(columnDefinition = "TEXT")
+    @Column(nullable = false, columnDefinition = "TEXT")
     private String description;
 
-    @Column
+    @Column(nullable = false, precision = 19, scale = 2)
     private BigDecimal price;
 
-    @Column
+    @Column(nullable = false)
     private Integer stock;
 
     @ElementCollection(fetch = FetchType.EAGER)

@@ -20,6 +20,7 @@ import br.com.mercado_souto.model.address.AddressService;
 import br.com.mercado_souto.model.client.ClientService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.validation.Valid;
 
 @RestController
 @RequestMapping("/api/address")
@@ -41,7 +42,7 @@ public class AddressController {
        description = "Receives the client id and address data in the request body."
    )
     @PostMapping("/{idClient}")
-    public ResponseEntity<Address> create (@PathVariable Long idClient, @RequestBody AddressRequest request){
+    public ResponseEntity<Address> create (@PathVariable Long idClient, @RequestBody @Valid AddressRequest request){
         Address newAddress = request.build();
         newAddress.setClient(clientService.findById(idClient));
         Address address = addressService.create(newAddress);
@@ -76,7 +77,7 @@ public class AddressController {
        description = "Receives the address id and returns the updated address."
    )
     @PutMapping("/{id}")
-    public ResponseEntity<Address> update(@PathVariable Long id, @RequestBody AddressRequest request){
+    public ResponseEntity<Address> update(@PathVariable Long id, @RequestBody @Valid AddressRequest request){
         Address address = addressService.update(id,request.build());
 
         return ResponseEntity.status(HttpStatus.OK).body(address);

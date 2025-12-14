@@ -7,6 +7,7 @@ import org.springframework.stereotype.Service;
 
 import br.com.mercado_souto.model.acess.Role;
 import br.com.mercado_souto.model.acess.RoleRepository;
+import br.com.mercado_souto.util.exception.DataAlreadyExistsException;
 import br.com.mercado_souto.util.exception.EntityNotFoundException;
 import jakarta.transaction.Transactional;
 
@@ -20,7 +21,9 @@ public class SellerService {
 
     @Transactional
     public Seller create(Seller seller){
-
+        if (sellerRepository.existsByCnpj(seller.getCnpj())) {
+            throw new DataAlreadyExistsException("CNPJ");
+        }
         Role sellerRole = roleRepository.findByName(Role.ROLE_SELLER);
         seller.getClient().getUser().getRoles().add(sellerRole);
         seller.setActive(Boolean.TRUE);

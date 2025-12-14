@@ -3,7 +3,6 @@ package br.com.mercado_souto.model.client;
 import java.util.ArrayList;
 import java.util.List;
 
-
 import org.hibernate.annotations.Fetch;
 import org.hibernate.annotations.FetchMode;
 import org.hibernate.annotations.SQLRestriction;
@@ -61,27 +60,27 @@ public class Client extends BaseEntity {
 
     @OneToMany(mappedBy = "client")
     @Builder.Default
-    private List<Order> orders= new ArrayList<>();;
+    private List<Order> orders = new ArrayList<>();;
 
     @ManyToMany
     @JoinTable(name = "client_favorite_products", joinColumns = @JoinColumn(name = "client_id"), inverseJoinColumns = @JoinColumn(name = "product_id"))
     @Builder.Default
     private List<Product> favoriteProducts = new ArrayList<>();
 
-    @Column
-    private String name;
-
-    @Column
+    @Column(unique = true, nullable = false, length = 100)
     private String email;
 
-    @Column
+    @Column(unique = true, nullable = false, length = 14)
+    private String cpf;
+
+    @Column(nullable = false, length = 70)
+    private String name;
+
+    @Column(nullable = false, length = 50)
     @JsonIgnore
     private String password;
 
-    @Column
-    private String cpf;
-
-    @Column
+    @Column(length = 16)
     private String phone;
 
 }

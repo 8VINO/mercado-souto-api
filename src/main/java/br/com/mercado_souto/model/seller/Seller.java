@@ -12,6 +12,8 @@ import br.com.mercado_souto.model.product.Product;
 import br.com.mercado_souto.util.entity.BaseEntity;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
+import jakarta.persistence.JoinColumn;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
@@ -32,7 +34,8 @@ import lombok.Setter;
 @NoArgsConstructor
 public class Seller extends BaseEntity{
    
-    @OneToOne
+    @OneToOne(fetch = FetchType.LAZY)
+    @JoinColumn(nullable = false)
     @JsonIgnore
     private Client client;
    
@@ -40,13 +43,15 @@ public class Seller extends BaseEntity{
     @OneToMany(mappedBy="seller")
     private List<Product> products; 
    
-    @Column
+    @Column(unique = true, nullable = false, length = 18)
     private String cnpj;
 
-    @Column
-    private Integer sales;
+    @Column(nullable = false)
+    @Builder.Default
+    private Integer sales=0;
 
-    @Column
-    private BigDecimal balance;
+    @Column(nullable = false, precision = 19, scale = 2)
+    @Builder.Default
+    private BigDecimal balance = BigDecimal.ZERO;
     
 }

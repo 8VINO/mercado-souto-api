@@ -3,6 +3,8 @@ package br.com.mercado_souto.api.order;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -16,9 +18,7 @@ import br.com.mercado_souto.model.product.Product;
 import br.com.mercado_souto.model.product.ProductService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
-
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
+import jakarta.validation.Valid;
 
 
 @RestController
@@ -60,7 +60,7 @@ public class OrderController {
     description = "Receives the product id and quantity in the request body, along with the selected client address id, and returns the order."
     )
     @PostMapping("/product/{productId}/address/{clientAddressId}")
-    public Order placeDirectOrder(@PathVariable Long productId, @PathVariable Long clientAddressId, @RequestBody OrderRequest request) {
+    public Order placeDirectOrder(@PathVariable Long productId, @PathVariable Long clientAddressId, @RequestBody @Valid OrderRequest request) {
         
         Product product = productService.findById(productId);
         Address clientAddress = addressService.findById(clientAddressId);

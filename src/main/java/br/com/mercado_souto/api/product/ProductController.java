@@ -24,6 +24,7 @@ import br.com.mercado_souto.model.product.ProductService;
 import br.com.mercado_souto.model.seller.SellerService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.validation.Valid;
 @RestController
 @RequestMapping("/api/product")
 @CrossOrigin
@@ -50,7 +51,7 @@ public class ProductController {
    )
 
     @PostMapping("/{idSeller}")
-    public ResponseEntity<Product> create(@PathVariable Long idSeller,@RequestBody ProductRequest request) {
+    public ResponseEntity<Product> create(@PathVariable Long idSeller,@RequestBody @Valid ProductRequest request) {
 
         Product newProduct = request.build();
         newProduct.setSeller(sellerService.findById(idSeller));
@@ -99,7 +100,7 @@ public class ProductController {
        description = "Receives the product id and returns the updated product."
    )
     @PutMapping("/{id}")
-    public ResponseEntity<Product> update(@PathVariable Long id, @RequestBody ProductRequest request) {
+    public ResponseEntity<Product> update(@PathVariable Long id, @RequestBody @Valid ProductRequest request) {
 
         Product modifiedProduct = request.build();
         modifiedProduct.setCategory(categoryService.findById(request.getIdCategory()));

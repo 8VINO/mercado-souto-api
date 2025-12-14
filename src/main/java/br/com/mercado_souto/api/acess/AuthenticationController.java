@@ -17,6 +17,7 @@ import br.com.mercado_souto.model.client.ClientService;
 import br.com.mercado_souto.model.security.JwtService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.validation.Valid;
 
 @RestController
 @RequestMapping("/api/login")
@@ -43,7 +44,7 @@ public class AuthenticationController {
     description = "Receives login attempt data, validates whether the credentials are correct, and returns user information such as token and role."
 )
     @PostMapping
-    public Map<Object, Object> login(@RequestBody AuthenticationRequest data) {
+    public Map<Object, Object> login(@RequestBody @Valid AuthenticationRequest data) {
 
         User authenticatedUser = userService.authenticate(data.getEmail(), data.getPassword());
         /*Mesmo que o Client e o User geralmente tenham Id iguais por ser sequencial, eu busco o Id do  Client autenticado diretamente pelo User autenticado para garantir que estou pegando o Id certo.
