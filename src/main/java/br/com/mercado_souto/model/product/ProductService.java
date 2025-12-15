@@ -10,6 +10,8 @@ import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
+import br.com.mercado_souto.api.product.ProductUpdateRequest;
+import br.com.mercado_souto.model.category.CategoryService;
 import br.com.mercado_souto.model.review.ReviewRepository;
 import br.com.mercado_souto.util.exception.EntityNotFoundException;
 import br.com.mercado_souto.util.upload.UploadImage;
@@ -23,6 +25,9 @@ public class ProductService {
 
     @Autowired
     private ReviewRepository reviewRepository;
+
+    @Autowired
+    private CategoryService categoryService;
 
     @Transactional
     public Product create(Product product) {
@@ -48,16 +53,26 @@ public class ProductService {
     }
 
     @Transactional
-    public Product update(Long id, Product modifiedProduct) {
+    public Product update(Long id, ProductUpdateRequest request) {
+
         Product product = findById(id);
 
-        product.setTitle(modifiedProduct.getTitle());
-        product.setSpecification(modifiedProduct.getSpecification());
-        product.setDescription(modifiedProduct.getDescription());
-        product.setPrice(modifiedProduct.getPrice());
-        product.setStock(modifiedProduct.getStock());
-        product.setCategory(modifiedProduct.getCategory());
-        product.setImageURL(modifiedProduct.getImageURL());
+        Optional.ofNullable(request.getTitle()).ifPresent(product::setTitle);
+
+        Optional.ofNullable(request.getSpecification()).ifPresent(product::setSpecification);
+
+        Optional.ofNullable(request.getDescription()).ifPresent(product::setDescription);
+       
+        Optional.ofNullable(request.getPrice()).ifPresent(product::setPrice);
+        
+        Optional.ofNullable(request.getStock()).ifPresent(product::setStock);
+
+        Optional.ofNullable(request.getImageURL()).ifPresent(product::setImageURL);
+
+        Optional.ofNullable(request.getIdCategory()).ifPresent(idCategory -> {
+         
+            product.setCategory(categoryService.findById(idCategory));
+        });
 
         return productRepository.save(product);
     }
@@ -96,35 +111,36 @@ public class ProductService {
     public void decrementStock(Long productId, Integer quantity) {
         Product product = findById(productId);
         int currentStock = product.getStock();
-        
+
         if (currentStock < quantity) {
-            throw new RuntimeException("Insufficient stock for product " + product.getTitle() + ". Current stock: " + currentStock );
+            throw new RuntimeException(
+                    "Insufficient stock for product " + product.getTitle() + ". Current stock: " + currentStock);
         }
-        
+
         product.setStock(currentStock - quantity);
-        
-        productRepository.save(product); 
+
+        productRepository.save(product);
     }
 
     @Transactional
     public void updateProductRating(Product product) {
-        
-    Product productToUpdate = findById(product.getId()); 
-    
-    Optional<Double> avgRatingOptional = reviewRepository.findAverageRatingByProduct(product);
-    
-    long totalReviews = reviewRepository.countByProduct(product);
-    if (avgRatingOptional.isPresent()) {
-        Double avg = avgRatingOptional.get();
-        BigDecimal averageRating = BigDecimal.valueOf(avg)
-                                            .setScale(2, RoundingMode.HALF_UP);
-        
-        productToUpdate.setAverageRating(averageRating);
-    } else {
-        productToUpdate.setAverageRating(BigDecimal.ZERO.setScale(2, RoundingMode.HALF_UP)); 
-    }
 
-    productToUpdate.setTotalReviews((int) totalReviews); 
-    productRepository.save(productToUpdate);
+        Product productToUpdate = findById(product.getId());
+
+        Optional<Double> avgRatingOptional = reviewRepository.findAverageRatingByProduct(product);
+
+        long totalReviews = reviewRepository.countByProduct(product);
+        if (avgRatingOptional.isPresent()) {
+            Double avg = avgRatingOptional.get();
+            BigDecimal averageRating = BigDecimal.valueOf(avg)
+                    .setScale(2, RoundingMode.HALF_UP);
+
+            productToUpdate.setAverageRating(averageRating);
+        } else {
+            productToUpdate.setAverageRating(BigDecimal.ZERO.setScale(2, RoundingMode.HALF_UP));
+        }
+
+        productToUpdate.setTotalReviews((int) totalReviews);
+        productRepository.save(productToUpdate);
     }
 }

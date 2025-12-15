@@ -2,10 +2,12 @@ package br.com.mercado_souto.model.seller;
 
 import java.math.BigDecimal;
 import java.util.List;
+import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import br.com.mercado_souto.api.seller.SellerUpdateRequest;
 import br.com.mercado_souto.model.acess.Role;
 import br.com.mercado_souto.model.acess.RoleRepository;
 import br.com.mercado_souto.util.exception.DataAlreadyExistsException;
@@ -49,11 +51,11 @@ public class SellerService {
 
 
     @Transactional
-    public Seller update (Long id, Seller modifiedSeller){
+    public Seller update (Long id, SellerUpdateRequest request){
+
         Seller seller = findById(id);
-        seller.setCnpj(modifiedSeller.getCnpj());
-        seller.setSales(modifiedSeller.getSales());
-        seller.setBalance(modifiedSeller.getBalance());
+        
+       Optional.ofNullable(request.getCnpj()).ifPresent(seller::setCnpj);
        
        
         return sellerRepository.save(seller);

@@ -78,10 +78,10 @@ public class SellerController {
        description = "Receives the seller id and returns the updated seller."
    )
     @PutMapping("/{id}")
-    ResponseEntity<Seller> update(@PathVariable Long id, @RequestBody @Valid SellerRequest request){
+    ResponseEntity<Seller> update(@PathVariable Long id, @RequestBody @Valid SellerUpdateRequest request){
 
-        Seller seller = sellerService.update(id, request.build());
-
+        Seller seller = sellerService.update(id, request);
+        
         return ResponseEntity.status(HttpStatus.OK).body(seller);
     }
 

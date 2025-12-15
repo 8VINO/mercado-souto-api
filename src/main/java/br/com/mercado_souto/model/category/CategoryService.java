@@ -1,10 +1,12 @@
 package br.com.mercado_souto.model.category;
 
 import java.util.List;
+import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import br.com.mercado_souto.api.category.CategoryUpdateRequest;
 import br.com.mercado_souto.util.exception.EntityNotFoundException;
 import jakarta.transaction.Transactional;
 
@@ -33,10 +35,10 @@ public class CategoryService {
     }
 
     @Transactional
-    public Category update(Long id, Category modifiedCategory){
+    public Category update(Long id, CategoryUpdateRequest request){
         Category category = findById(id);
         
-        category.setName(modifiedCategory.getName());
+        Optional.ofNullable(request.getName()).ifPresent(category::setName);
 
         return categoryRepository.save(category);
     }

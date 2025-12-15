@@ -100,11 +100,9 @@ public class ProductController {
        description = "Receives the product id and returns the updated product."
    )
     @PutMapping("/{id}")
-    public ResponseEntity<Product> update(@PathVariable Long id, @RequestBody @Valid ProductRequest request) {
+    public ResponseEntity<Product> update(@PathVariable Long id, @RequestBody @Valid ProductUpdateRequest request) {
 
-        Product modifiedProduct = request.build();
-        modifiedProduct.setCategory(categoryService.findById(request.getIdCategory()));
-        Product product = productService.update(id, modifiedProduct);
+        Product product = productService.update(id, request);
 
         return ResponseEntity.status( HttpStatus.OK).body(product);
     }

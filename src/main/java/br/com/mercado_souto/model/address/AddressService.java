@@ -1,10 +1,12 @@
 package br.com.mercado_souto.model.address;
 
 import java.util.List;
+import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import br.com.mercado_souto.api.address.AddressUpdateRequest;
 import br.com.mercado_souto.util.exception.EntityNotFoundException;
 import jakarta.transaction.Transactional;
 
@@ -33,17 +35,25 @@ public class AddressService {
     }
 
     @Transactional
-    public Address update(Long id, Address modifiedAddress) {
+    public Address update(Long id, AddressUpdateRequest request) {
+        
         Address address = findById(id);
 
-        address.setCep(modifiedAddress.getCep());
-        address.setStreet(modifiedAddress.getStreet());
-        address.setNumber(modifiedAddress.getNumber());
-        address.setComplement(modifiedAddress.getComplement());
-        address.setAdditionalInfo(modifiedAddress.getAdditionalInfo());
-        address.setHome(modifiedAddress.getHome());
-        address.setContactName(modifiedAddress.getContactName());
-        address.setContactPhone(modifiedAddress.getContactPhone());
+        Optional.ofNullable(request.getCep()).ifPresent(address::setCep);
+
+        Optional.ofNullable(request.getStreet()).ifPresent(address::setStreet);
+
+        Optional.ofNullable(request.getNumber()).ifPresent(address::setNumber);
+
+        Optional.ofNullable(request.getComplement()).ifPresent(address::setComplement);
+
+        Optional.ofNullable(request.getAdditionalInfo()).ifPresent(address::setAdditionalInfo);
+
+        Optional.ofNullable(request.getHome()).ifPresent(address::setHome);
+
+        Optional.ofNullable(request.getContactName()).ifPresent(address::setContactName);
+
+        Optional.ofNullable(request.getContactPhone()).ifPresent(address::setContactPhone);
 
         return addressRepository.save(address);
     }

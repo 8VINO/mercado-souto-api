@@ -77,8 +77,8 @@ public class AddressController {
        description = "Receives the address id and returns the updated address."
    )
     @PutMapping("/{id}")
-    public ResponseEntity<Address> update(@PathVariable Long id, @RequestBody @Valid AddressRequest request){
-        Address address = addressService.update(id,request.build());
+    public ResponseEntity<Address> update(@PathVariable Long id, @RequestBody @Valid AddressUpdateRequest request){
+        Address address = addressService.update(id,request);
 
         return ResponseEntity.status(HttpStatus.OK).body(address);
     }
