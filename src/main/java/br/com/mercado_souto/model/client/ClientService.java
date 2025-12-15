@@ -1,12 +1,13 @@
 package br.com.mercado_souto.model.client;
 
-
 import java.util.Collections;
 import java.util.List;
+import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import br.com.mercado_souto.api.client.ClientUpdateRequest;
 import br.com.mercado_souto.model.acess.Role;
 import br.com.mercado_souto.model.acess.RoleRepository;
 import br.com.mercado_souto.model.acess.User;
@@ -18,6 +19,7 @@ import br.com.mercado_souto.model.product.Product;
 import br.com.mercado_souto.util.exception.DataAlreadyExistsException;
 import br.com.mercado_souto.util.exception.EntityNotFoundException;
 import jakarta.transaction.Transactional;
+
 
 @Service
 public class ClientService {
@@ -43,17 +45,30 @@ public class ClientService {
             throw new DataAlreadyExistsException("CPF");
         }
 
-
-        Role clientRole= roleRepository.findByName(Role.ROLE_CLIENT);
+        Role clientRole = roleRepository.findByName(Role.ROLE_CLIENT);
         client.getUser().getRoles().add(clientRole);
-        
+
         userService.save(client.getUser());
 
         client.setActive(Boolean.TRUE);
 
-        Client clientCreated=clientRepository.save(client);
-        Cart newCart=cartService.create(clientCreated);
+        Client clientCreated = clientRepository.save(client);
+        Cart newCart = cartService.create(clientCreated);
         clientCreated.setCart(newCart);
+        return clientRepository.save(clientCreated);
+    }
+
+    @Transactional
+    public Client createOAuthClient(Client client) {
+
+        client.setActive(Boolean.TRUE);
+
+        Client clientCreated = clientRepository.save(client);
+
+        Cart newCart = cartService.create(clientCreated);
+
+        clientCreated.setCart(newCart);
+
         return clientRepository.save(clientCreated);
     }
 
@@ -71,20 +86,40 @@ public class ClientService {
 
     public Client findByUser(User user) {
         Client client = clientRepository.findByUser(user)
-                        .orElseThrow(() -> new EntityNotFoundException("Client", user));
-              
+                .orElseThrow(() -> new EntityNotFoundException("Client", user));
+
         return client;
     }
 
     @Transactional
-    public Client update(Long id, Client modifiedClient) {
+    public Client update(Long id, ClientUpdateRequest request) {
+        
         Client client = findById(id);
-        client.setName(modifiedClient.getName());
-        client.setEmail(modifiedClient.getEmail());
-        client.setPassword(modifiedClient.getPassword());
-        client.setCpf(modifiedClient.getCpf());
-        client.setPhone(modifiedClient.getPhone());
+        User user = client.getUser(); 
+        String username = client.getUser().getUsername();
+        if (userService.exists(username)) {
+            throw new DataAlreadyExistsException("EMAIL");
+        }
+        if (clientRepository.existsByCpf(client.getCpf())) {
+            throw new DataAlreadyExistsException("CPF");
+        }
+        Optional.ofNullable(request.getName()).ifPresent(client::setName);
+    
+        Optional.ofNullable(request.getCpf()).ifPresent(client::setCpf);
+        
+        Optional.ofNullable(request.getPhone()).ifPresent(client::setPhone);
+        
+        Optional.ofNullable(request.getEmail()).ifPresent(newEmail -> {
+            user.setUsername(newEmail);
+            client.setEmail(newEmail);
+        });
 
+        Optional.ofNullable(request.getPassword()).ifPresent(newRawPassword -> {
+            user.setPassword(newRawPassword);
+        });
+
+        userService.save(user); 
+        
         return clientRepository.save(client);
     }
 
@@ -100,8 +135,8 @@ public class ClientService {
     }
 
     @Transactional
-    public Boolean addFavoriteProduct(Client client,Product product){
-        if(client.getFavoriteProducts().contains(product)){
+    public Boolean addFavoriteProduct(Client client, Product product) {
+        if (client.getFavoriteProducts().contains(product)) {
             return false;
         }
         client.getFavoriteProducts().add(product);
@@ -110,26 +145,27 @@ public class ClientService {
     }
 
     @Transactional
-    public Boolean removeFavoriteProduct(Client client,Product product){
-        if(!client.getFavoriteProducts().contains(product)){
+    public Boolean removeFavoriteProduct(Client client, Product product) {
+        if (!client.getFavoriteProducts().contains(product)) {
             return false;
         }
         client.getFavoriteProducts().remove(product);
         clientRepository.save(client);
         return true;
-    
-    }
-    @Transactional
-    public List<Product> getFavoriteProducts(Client client){
-        List<Product> list = client.getFavoriteProducts();
-        Collections.reverse(list);
-       return list;
+
     }
 
     @Transactional
-    public List<Order> getOrders(Client client){
+    public List<Product> getFavoriteProducts(Client client) {
+        List<Product> list = client.getFavoriteProducts();
+        Collections.reverse(list);
+        return list;
+    }
+
+    @Transactional
+    public List<Order> getOrders(Client client) {
         List<Order> list = client.getOrders();
         Collections.reverse(list);
-       return list;
+        return list;
     }
 }

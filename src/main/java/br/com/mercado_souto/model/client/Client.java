@@ -7,7 +7,7 @@ import org.hibernate.annotations.Fetch;
 import org.hibernate.annotations.FetchMode;
 import org.hibernate.annotations.SQLRestriction;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 import br.com.mercado_souto.model.acess.User;
@@ -67,20 +67,15 @@ public class Client extends BaseEntity {
     @Builder.Default
     private List<Product> favoriteProducts = new ArrayList<>();
 
-    @Column(unique = true, nullable = false, length = 100)
-    private String email;
-
-    @Column(unique = true, nullable = false, length = 14)
+    @Column(unique = true, nullable = true, length = 14) 
     private String cpf;
 
     @Column(nullable = false, length = 70)
     private String name;
 
-    @Column(nullable = false, length = 50)
-    @JsonIgnore
-    private String password;
-
-    @Column(length = 16)
+    @Column(length = 16, nullable = true)
     private String phone;
 
+    @Column(unique = true, nullable = false, length = 100)
+    private String email;
 }

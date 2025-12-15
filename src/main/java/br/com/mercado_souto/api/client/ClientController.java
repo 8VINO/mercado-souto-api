@@ -99,9 +99,9 @@ public class ClientController {
        description = "Receives the client id and returns the updated client."
    )
     @PutMapping("/{id}")
-    ResponseEntity<Client> update(@PathVariable Long id, @RequestBody @Valid ClientRequest request){
+    ResponseEntity<Client> update(@PathVariable Long id, @RequestBody @Valid ClientUpdateRequest request){
 
-        Client client = clientService.update(id, request.build());
+        Client client = clientService.update(id, request);
 
         return ResponseEntity.status(HttpStatus.OK).body(client);
     }

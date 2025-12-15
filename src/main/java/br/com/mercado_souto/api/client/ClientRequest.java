@@ -50,7 +50,6 @@ public class ClientRequest {
                 .user(buildUser())
                 .name(name)
                 .email(email)
-                .password(password)
                 .cpf(cpf)
                 .phone(phone)
                 .build();

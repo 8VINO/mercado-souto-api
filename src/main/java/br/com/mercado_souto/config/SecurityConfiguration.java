@@ -2,6 +2,7 @@ package br.com.mercado_souto.config;
 import java.util.Arrays;
 import java.util.List;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
@@ -16,16 +17,25 @@ import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
 import br.com.mercado_souto.model.security.JwtAuthenticationFilter;
+import br.com.mercado_souto.model.security.OAuth2AuthenticationSuccessHandler;
+import jakarta.servlet.http.HttpServletResponse;
 
 @Configuration
 @EnableWebSecurity
 public class SecurityConfiguration {
-    private final AuthenticationProvider authenticationProvider;
-    private final JwtAuthenticationFilter jwtAuthenticationFilter;
+ @Autowired 
+    private AuthenticationProvider authenticationProvider;
+    
+    @Autowired
+    private JwtAuthenticationFilter jwtAuthenticationFilter;
+    
+    
+    @Autowired
+    private OAuth2AuthenticationSuccessHandler oauth2AuthenticationSuccessHandler;
 
-    public SecurityConfiguration(JwtAuthenticationFilter jwtAuthenticationFilter, AuthenticationProvider authenticationProvider) {
-        this.authenticationProvider = authenticationProvider;
-        this.jwtAuthenticationFilter = jwtAuthenticationFilter;
+   
+    public SecurityConfiguration() {
+      
     }
 
     @Bean
@@ -35,6 +45,9 @@ public class SecurityConfiguration {
             .cors(cors -> cors.configurationSource(corsConfigurationSource()))
             .csrf(c -> c.disable())
             .authorizeHttpRequests(authorize -> authorize
+
+               
+                .requestMatchers("/oauth2/**", "/login/oauth2/**").permitAll()
 
                 .requestMatchers(HttpMethod.POST, "/api/client").permitAll()
                 .requestMatchers(HttpMethod.POST, "/api/seller").permitAll()
@@ -55,6 +68,16 @@ public class SecurityConfiguration {
                 
                 .anyRequest().authenticated()
                 
+            )
+            
+            .oauth2Login(oauth2 -> oauth2
+                
+                .successHandler(oauth2AuthenticationSuccessHandler) 
+                
+               
+                .failureHandler((request, response, exception) -> 
+                    response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "Login com Google falhou.")
+                )
             )
             .sessionManagement((session) -> session
                 .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
