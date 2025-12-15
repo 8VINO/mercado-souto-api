@@ -1,12 +1,16 @@
 package br.com.mercado_souto.model.product;
 
+import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.util.List;
+import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
+import br.com.mercado_souto.model.review.ReviewRepository;
 import br.com.mercado_souto.util.exception.EntityNotFoundException;
 import br.com.mercado_souto.util.upload.UploadImage;
 import jakarta.transaction.Transactional;
@@ -16,6 +20,9 @@ public class ProductService {
 
     @Autowired
     private ProductRepository productRepository;
+
+    @Autowired
+    private ReviewRepository reviewRepository;
 
     @Transactional
     public Product create(Product product) {
@@ -97,5 +104,27 @@ public class ProductService {
         product.setStock(currentStock - quantity);
         
         productRepository.save(product); 
+    }
+
+    @Transactional
+    public void updateProductRating(Product product) {
+        
+    Product productToUpdate = findById(product.getId()); 
+    
+    Optional<Double> avgRatingOptional = reviewRepository.findAverageRatingByProduct(product);
+    
+    long totalReviews = reviewRepository.countByProduct(product);
+    if (avgRatingOptional.isPresent()) {
+        Double avg = avgRatingOptional.get();
+        BigDecimal averageRating = BigDecimal.valueOf(avg)
+                                            .setScale(2, RoundingMode.HALF_UP);
+        
+        productToUpdate.setAverageRating(averageRating);
+    } else {
+        productToUpdate.setAverageRating(BigDecimal.ZERO.setScale(2, RoundingMode.HALF_UP)); 
+    }
+
+    productToUpdate.setTotalReviews((int) totalReviews); 
+    productRepository.save(productToUpdate);
     }
 }

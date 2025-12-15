@@ -33,7 +33,7 @@ import lombok.Setter;
 public class Product extends BaseEntity {
     @ManyToOne(fetch = FetchType.EAGER, optional = false)
     private Seller seller;
-    
+
     @ManyToOne(fetch = FetchType.EAGER, optional = false)
     private Category category;
 
@@ -55,5 +55,12 @@ public class Product extends BaseEntity {
     @ElementCollection(fetch = FetchType.EAGER)
     @Builder.Default
     private List<String> imageURL = new ArrayList<>();
+
+    @Column(precision = 3, scale = 2) 
+    private BigDecimal averageRating;
+
+    @Column(nullable = false)
+    @Builder.Default
+    private Integer totalReviews = 0;
 
 }
