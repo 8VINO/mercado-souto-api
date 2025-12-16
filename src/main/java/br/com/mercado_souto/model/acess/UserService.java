@@ -65,7 +65,7 @@ public class UserService implements UserDetailsService {
         return repository.existsByUsername(username);
     }
 
-   @Transactional
+    @Transactional
     public Client findOrCreateOAuthClient(String email, String name) {
 
         Optional<User> existingUserOpt = repository.findByUsername(email);
@@ -78,19 +78,18 @@ public class UserService implements UserDetailsService {
             if (existingClientOpt.isPresent()) {
                 return existingClientOpt.get();
             } else {
-              
+
                 Client newClient = new Client();
                 newClient.setUser(user);
                 newClient.setName(name);
                 newClient.setEmail(email);
                 newClient.setActive(Boolean.TRUE);
 
-                
-                return clientService.createOAuthClient(newClient); 
+                return clientService.createOAuthClient(newClient);
             }
 
         } else {
-           
+
             User newUser = new User();
             newUser.setUsername(email);
             newUser.setActive(Boolean.TRUE);
@@ -103,14 +102,12 @@ public class UserService implements UserDetailsService {
 
             User savedUser = repository.save(newUser);
 
-            
             Client newClient = new Client();
             newClient.setUser(savedUser);
             newClient.setName(name);
             newClient.setEmail(email);
             newClient.setActive(Boolean.TRUE);
 
-           
             return clientService.createOAuthClient(newClient);
         }
     }
@@ -125,10 +122,17 @@ public class UserService implements UserDetailsService {
     @Transactional
     public User save(User user) {
 
-        user.setPassword(passwordEncoder.encode(user.getPassword()));
+        if (user.getId() == null) {
+
+            user.setPassword(passwordEncoder.encode(user.getPassword()));
+        } else {
+            if (!user.getPassword().startsWith("$2a$") && !user.getPassword().startsWith("$2b$")) {
+                user.setPassword(passwordEncoder.encode(user.getPassword()));
+            }
+        }
+
         user.setActive(Boolean.TRUE);
         return repository.save(user);
     }
 
- 
 }

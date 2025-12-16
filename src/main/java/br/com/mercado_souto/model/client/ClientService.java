@@ -20,7 +20,6 @@ import br.com.mercado_souto.util.exception.DataAlreadyExistsException;
 import br.com.mercado_souto.util.exception.EntityNotFoundException;
 import jakarta.transaction.Transactional;
 
-
 @Service
 public class ClientService {
     @Autowired
@@ -93,22 +92,42 @@ public class ClientService {
 
     @Transactional
     public Client update(Long id, ClientUpdateRequest request) {
-        
+
         Client client = findById(id);
-        User user = client.getUser(); 
-        String username = client.getUser().getUsername();
-        if (userService.exists(username)) {
-            throw new DataAlreadyExistsException("EMAIL");
-        }
-        if (clientRepository.existsByCpf(client.getCpf())) {
-            throw new DataAlreadyExistsException("CPF");
-        }
+        User user = client.getUser();
+
+        
+        Optional.ofNullable(request.getEmail()).ifPresent(newEmail -> {
+           
+            if (!newEmail.equalsIgnoreCase(user.getUsername())) {
+
+                
+                if (userService.exists(newEmail)) {
+                    throw new DataAlreadyExistsException("EMAIL");
+                }
+                
+                user.setUsername(newEmail);
+                client.setEmail(newEmail);
+            }
+        });
+
+        Optional.ofNullable(request.getCpf()).ifPresent(newCpf -> {
+
+            if (!newCpf.equals(client.getCpf())) {
+
+                if (clientRepository.existsByCpfAndIdNot(newCpf, id)) {
+                    throw new DataAlreadyExistsException("CPF");
+                }
+
+                client.setCpf(newCpf);
+            }
+        });
         Optional.ofNullable(request.getName()).ifPresent(client::setName);
-    
+
         Optional.ofNullable(request.getCpf()).ifPresent(client::setCpf);
-        
+
         Optional.ofNullable(request.getPhone()).ifPresent(client::setPhone);
-        
+
         Optional.ofNullable(request.getEmail()).ifPresent(newEmail -> {
             user.setUsername(newEmail);
             client.setEmail(newEmail);
@@ -118,8 +137,8 @@ public class ClientService {
             user.setPassword(newRawPassword);
         });
 
-        userService.save(user); 
-        
+        userService.save(user);
+
         return clientRepository.save(client);
     }
 

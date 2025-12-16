@@ -13,4 +13,6 @@ public interface ClientRepository extends JpaRepository<Client, Long> {
     boolean existsByCpf(String cpf);
 
     boolean existsByUser(User user);
+
+    boolean existsByCpfAndIdNot(String cpf, Long id);
 }
