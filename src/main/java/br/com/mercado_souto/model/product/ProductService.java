@@ -6,6 +6,8 @@ import java.util.List;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
@@ -35,8 +37,9 @@ public class ProductService {
         return productRepository.save(product);
     }
 
-    public List<Product> findAll() {
-        return productRepository.findAll();
+    public List<Product> findAll(Integer offset, Integer limit) {
+        Pageable pageable = PageRequest.of(offset / limit, limit);
+        return productRepository.findAll(pageable).getContent();
 
     }
 
@@ -47,9 +50,9 @@ public class ProductService {
         return product;
     }
 
-    public List<Product> findBySeller(Long idSeller) {
-
-        return productRepository.findBySellerId(idSeller);
+    public List<Product> findBySeller(Long idSeller, Integer offset, Integer limit) {
+        Pageable pageable = PageRequest.of(offset / limit, limit);
+        return productRepository.findBySellerId(idSeller,pageable).getContent();
     }
 
     @Transactional
@@ -62,15 +65,15 @@ public class ProductService {
         Optional.ofNullable(request.getSpecification()).ifPresent(product::setSpecification);
 
         Optional.ofNullable(request.getDescription()).ifPresent(product::setDescription);
-       
+
         Optional.ofNullable(request.getPrice()).ifPresent(product::setPrice);
-        
+
         Optional.ofNullable(request.getStock()).ifPresent(product::setStock);
 
         Optional.ofNullable(request.getImageURL()).ifPresent(product::setImageURL);
 
         Optional.ofNullable(request.getIdCategory()).ifPresent(idCategory -> {
-         
+
             product.setCategory(categoryService.findById(idCategory));
         });
 
@@ -99,12 +102,14 @@ public class ProductService {
         return productRepository.save(product);
     }
 
-    public List<Product> findProductByCategory(Long categoryId) {
-        return productRepository.findByCategoryId(categoryId);
+    public List<Product> findProductByCategory(Long categoryId, Integer offset, Integer limit) {
+         Pageable pageable = PageRequest.of(offset / limit, limit);
+        return productRepository.findByCategoryId(categoryId, pageable).getContent();
     }
 
-    public List<Product> search(String title, Sort sort) {
-        return productRepository.findByTitleContainingIgnoreCase(title, sort);
+    public List<Product> search(String title, Sort sort, Integer offset, Integer limit) {
+         Pageable pageable = PageRequest.of(offset / limit, limit, sort);
+        return productRepository.findByTitleContainingIgnoreCase(title, pageable).getContent();
     }
 
     @Transactional

@@ -57,9 +57,10 @@ public class SecurityConfiguration {
                 .requestMatchers(HttpMethod.GET, "/api/product/*").permitAll()
                 .requestMatchers(HttpMethod.GET, "/api/product/search/**").permitAll()
                 .requestMatchers(HttpMethod.GET, "/api/product/by-seller/*").permitAll()
-                .requestMatchers(HttpMethod.GET, "/api/product/category/*").permitAll()
+                .requestMatchers(HttpMethod.GET, "/api/product/by-category/*").permitAll()
 
                 .requestMatchers(HttpMethod.GET, "/api/category").permitAll()
+                .requestMatchers(HttpMethod.GET, "/api/category/*").permitAll()
                 
                 .requestMatchers(HttpMethod.GET, "/api-docs/*").permitAll()
                 .requestMatchers(HttpMethod.GET, "/swagger-ui/*").permitAll()

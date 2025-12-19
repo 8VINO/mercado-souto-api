@@ -1,14 +1,17 @@
 package br.com.mercado_souto.model.product;
 
-import java.util.List;
 
-import org.springframework.data.domain.Sort;
+
+import org.springframework.data.domain.Page;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.domain.Pageable;
 
 public interface ProductRepository extends JpaRepository<Product, Long> {
-    List<Product> findBySellerId(Long idSeller);
+    Page<Product> findBySellerId(Long idSeller, Pageable pageable);
 
-    List<Product> findByCategoryId(Long categoryId);
+    Page<Product> findByCategoryId(Long categoryId, Pageable pageable);
 
-     List<Product> findByTitleContainingIgnoreCase(String title, Sort sort);
+    Page<Product> findByTitleContainingIgnoreCase(String title, Pageable pageable);
+
+    Page<Product> findAll(Pageable pageable);
 }

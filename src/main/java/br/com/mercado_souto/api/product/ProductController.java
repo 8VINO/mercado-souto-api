@@ -62,12 +62,14 @@ public class ProductController {
     }
 
     @Operation(
-       summary = "Endpoint responsible for getting all products",
-       description = "Returns a list of products from ALL sellers."
+       summary = "Endpoint responsible for getting all products with pagination",
+       description = "Accepts offset and limit as request parameters and returns a paginated list of products from all sellers."
    )
     @GetMapping
-    public ResponseEntity<List<Product>> findAll() {
-        List<Product> list = productService.findAll();
+    public ResponseEntity<List<Product>> findAll(
+        @RequestParam(defaultValue = "0") Integer offset,
+        @RequestParam(defaultValue = "10") Integer limit) {
+        List<Product> list = productService.findAll(offset,limit);
         return ResponseEntity.status( HttpStatus.OK).body(list);
     }
 
@@ -78,10 +80,12 @@ public class ProductController {
    
 
     @GetMapping("/by-seller/{idSeller}")
-    public ResponseEntity<List<Product>> findBySeller(@PathVariable Long idSeller){
+    public ResponseEntity<List<Product>> findBySeller(@PathVariable Long idSeller,
+        @RequestParam(defaultValue = "0") Integer offset,
+        @RequestParam(defaultValue = "10") Integer limit){
 
         sellerService.findById(idSeller);//garantir q o seller existe
-        List<Product> list = productService.findBySeller(idSeller);
+        List<Product> list = productService.findBySeller(idSeller,offset,limit);
 
         return ResponseEntity.status( HttpStatus.OK).body(list);
     }
@@ -128,16 +132,18 @@ public class ProductController {
         Product product = productService.saveImage(id, image);
         return ResponseEntity.status(HttpStatus.CREATED).body(product);
     }
-     @Operation(
-       summary = "Endpoint responsible for getting all products from a  category",
-       description = "Receives the category id and returns a list of products."
-   )
+  @Operation(
+        summary = "Endpoint responsible for getting all products from a category with pagination",
+        description = "Receives the category id, offset, and limit as request parameters and returns a paginated list of products."
+    )
     @GetMapping("/by-category/{categoryId}")
-    public ResponseEntity<List<Product>> findProductByCategory(@PathVariable Long categoryId) {
+    public ResponseEntity<List<Product>> findProductByCategory(@PathVariable Long categoryId,
+        @RequestParam(defaultValue = "0") Integer offset,
+        @RequestParam(defaultValue = "10") Integer limit) {
 
         categoryService.findById(categoryId);
         
-        List<Product> list = productService.findProductByCategory(categoryId);
+        List<Product> list = productService.findProductByCategory(categoryId,offset,limit);
 
         return ResponseEntity.status(HttpStatus.OK).body(list);
     }
@@ -148,9 +154,11 @@ public class ProductController {
        "Ex:/api/product/search?title=samsung&sort=price,desc"
    )
     @GetMapping("/search")
-    public ResponseEntity<List<Product>> search(@RequestParam String title, Sort sort) {
+    public ResponseEntity<List<Product>> search(@RequestParam String title, Sort sort, 
+        @RequestParam(defaultValue = "0") Integer offset,
+        @RequestParam(defaultValue = "10") Integer limit) {
         
-        List<Product> list = productService.search(title, sort);
+        List<Product> list = productService.search(title, sort, offset, limit);
         return ResponseEntity.status(HttpStatus.OK).body(list);
     }
     
