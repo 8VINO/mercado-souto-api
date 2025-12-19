@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import br.com.mercado_souto.model.acess.Role;
@@ -153,27 +154,31 @@ public class ClientController {
     }
 
     @Operation(
-       summary = "Endpoint responsible for getting favorite products",
-       description = "Returns a list of products"
+       summary = "Endpoint responsible for getting favorite products with pagination",
+       description = "Receive client id, offset, and limit as request parameters and returns a paginated list of products."
    )
     @GetMapping("{clientId}/favorite-products")
-    public ResponseEntity<List<Product>> getFavoriteProducts (@PathVariable Long clientId){
+    public ResponseEntity<List<Product>> getFavoriteProducts (@PathVariable Long clientId,
+        @RequestParam(defaultValue = "0") Integer offset,
+        @RequestParam(defaultValue = "10") Integer limit){
         Client client=clientService.findById(clientId);
 
-        List<Product> list = clientService.getFavoriteProducts(client);
+        List<Product> list = clientService.getFavoriteProducts(client,offset,limit);
 
         return ResponseEntity.status(HttpStatus.OK).body(list);
     }
 
     @Operation(
-       summary = "Endpoint responsible for getting all orders",
-       description = "Returns a list of orders"
+       summary = "Endpoint responsible for getting all orders with pagination",
+       description = "Receive client id, offset, and limit as request parameters and returns a paginated list of orders."
    )
     @GetMapping("{clientId}/orders")
-    public ResponseEntity<List<Order>> getOrders (@PathVariable Long clientId){
+    public ResponseEntity<List<Order>> getOrders (@PathVariable Long clientId,  
+        @RequestParam(defaultValue = "0") Integer offset,
+        @RequestParam(defaultValue = "10") Integer limit){
         Client client=clientService.findById(clientId);
 
-        List<Order> list = clientService.getOrders(client);
+        List<Order> list = clientService.getOrders(client,offset,limit);
 
         return ResponseEntity.status(HttpStatus.OK).body(list);
     }

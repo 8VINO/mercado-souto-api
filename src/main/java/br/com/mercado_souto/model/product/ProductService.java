@@ -52,7 +52,7 @@ public class ProductService {
 
     public List<Product> findBySeller(Long idSeller, Integer offset, Integer limit) {
         Pageable pageable = PageRequest.of(offset / limit, limit);
-        return productRepository.findBySellerId(idSeller,pageable).getContent();
+        return productRepository.findBySellerId(idSeller, pageable).getContent();
     }
 
     @Transactional
@@ -103,12 +103,12 @@ public class ProductService {
     }
 
     public List<Product> findProductByCategory(Long categoryId, Integer offset, Integer limit) {
-         Pageable pageable = PageRequest.of(offset / limit, limit);
+        Pageable pageable = PageRequest.of(offset / limit, limit);
         return productRepository.findByCategoryId(categoryId, pageable).getContent();
     }
 
     public List<Product> search(String title, Sort sort, Integer offset, Integer limit) {
-         Pageable pageable = PageRequest.of(offset / limit, limit, sort);
+        Pageable pageable = PageRequest.of(offset / limit, limit, sort);
         return productRepository.findByTitleContainingIgnoreCase(title, pageable).getContent();
     }
 

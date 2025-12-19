@@ -74,8 +74,8 @@ public class ProductController {
     }
 
      @Operation(
-       summary = "Endpoint responsible for getting all products from a SINGLE seller",
-       description = "Receives the seller id and returns a list of products."
+       summary = "Endpoint responsible for getting all products from a SINGLE seller with pagination",
+       description = "Receives the seller id, offset, and limit as request parameters and returns a paginated list of products."
    )
    
 
@@ -150,7 +150,7 @@ public class ProductController {
     
     @Operation(
        summary = "Endpoint responsible for searching products",
-       description = "Searches for products based on the provided title and returns a list of products. The results can be dynamically sorted using the 'sort' query parameter, allowing ordering by one or more fields in ascending or descending order."+
+       description = "Searches for products based on the provided title and returns a paginated list of products. The results can be dynamically sorted using the 'sort' query parameter, allowing ordering by one or more fields in ascending or descending order."+
        "Ex:/api/product/search?title=samsung&sort=price,desc"
    )
     @GetMapping("/search")

@@ -1,10 +1,11 @@
 package br.com.mercado_souto.model.client;
 
-import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import br.com.mercado_souto.api.client.ClientUpdateRequest;
@@ -96,16 +97,14 @@ public class ClientService {
         Client client = findById(id);
         User user = client.getUser();
 
-        
         Optional.ofNullable(request.getEmail()).ifPresent(newEmail -> {
-           
+
             if (!newEmail.equalsIgnoreCase(user.getUsername())) {
 
-                
                 if (userService.exists(newEmail)) {
                     throw new DataAlreadyExistsException("EMAIL");
                 }
-                
+
                 user.setUsername(newEmail);
                 client.setEmail(newEmail);
             }
@@ -175,16 +174,16 @@ public class ClientService {
     }
 
     @Transactional
-    public List<Product> getFavoriteProducts(Client client) {
-        List<Product> list = client.getFavoriteProducts();
-        Collections.reverse(list);
-        return list;
+    public List<Product> getFavoriteProducts(Client client, Integer offset, Integer limit) {
+
+        Pageable pageable = PageRequest.of(offset / limit, limit);
+
+        return clientRepository.findFavoriteProducts(client, pageable).getContent();
     }
 
     @Transactional
-    public List<Order> getOrders(Client client) {
-        List<Order> list = client.getOrders();
-        Collections.reverse(list);
-        return list;
+    public List<Order> getOrders(Client client, Integer offset, Integer limit) {
+        Pageable pageable = PageRequest.of(offset / limit, limit);
+        return clientRepository.findOrdersByClient(client, pageable).getContent();
     }
 }
